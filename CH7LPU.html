@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Iheanacho Prosper">
+
+<title>Data Analysis Project - Predictive Modeling of Car CO2 Emissions using EPA Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="CH7LPU_files/libs/clipboard/clipboard.min.js"></script>
+<script src="CH7LPU_files/libs/quarto-html/quarto.js"></script>
+<script src="CH7LPU_files/libs/quarto-html/popper.min.js"></script>
+<script src="CH7LPU_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="CH7LPU_files/libs/quarto-html/anchor.min.js"></script>
+<link href="CH7LPU_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="CH7LPU_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="CH7LPU_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="CH7LPU_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="CH7LPU_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data Analysis Project - Predictive Modeling of Car CO2 Emissions using EPA Data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Iheanacho Prosper </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p><code>Instructor: András Gyimesi, Dr.</code></p>
+<section id="project-description" class="level2">
+<h2 class="anchored" data-anchor-id="project-description">Project Description</h2>
+<p>This project aims to develop an accurate predictive model for estimating carbon dioxide (CO2) emissions from vehicles based on data obtained from the United States Environmental Protection Agency (EPA). The transportation sector is a major contributor to greenhouse gas emissions, and understanding the factors influencing CO2 emissions from cars is crucial for developing sustainable and environmentally friendly transportation solutions.</p>
+</section>
+<section id="project-objectives" class="level2">
+<h2 class="anchored" data-anchor-id="project-objectives">Project Objectives</h2>
+<ul>
+<li><p>Data Collection and Pre-processing</p></li>
+<li><p>Exploratory Data Analysis (EDA):</p>
+<p>Is there any interesting insights on the distribution of CO2 emission? Are there any potential relationships between emissions and car characteristics such as vehicle weight?</p></li>
+<li><p>Model Selection, Training and Validation:</p>
+<p>Can we create a model that predicts CO2 emissions? Can we train and improve the initial model?</p></li>
+<li><p>Interpretability and Insights:</p>
+<p>How best can we interpret our models? Do we have a sufficient goodness of fit? Which car features have significant effect on CO2 emissions?</p></li>
+</ul>
+</section>
+<section id="data-source" class="level2">
+<h2 class="anchored" data-anchor-id="data-source">Data Source</h2>
+<p>The dataset used in this project is sourced from the United States Environmental Protection Agency (EPA) and encompasses information on vehicle attributes, fuel efficiency, and CO2 emissions. To learn more about the data, see <a href="https://www.epa.gov/automotive-trends/about-automotive-trends-data" class="uri">https://www.epa.gov/automotive-trends/about-automotive-trends-data</a></p>
+</section>
+<section id="data-collection-and-pre-processing" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection-and-pre-processing">Data Collection and Pre-processing</h2>
+<p>The Greenhouse Gas Emissions by Vehicle type data is stored on the project folder as a csv. We read the data and properly clean and format the data to ensure its suitability for modeling.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>automobile_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Greenhouse Gas Emissions by Vehicle type.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"automobile_data"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>automobile_data[automobile_data <span class="sc">==</span> <span class="st">"-"</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(automobile_data) <span class="ot">&lt;-</span> <span class="fu">tolower</span>(<span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">."</span>, <span class="st">"_"</span>, <span class="fu">names</span>(automobile_data)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="exploratory-data-analysis-eda" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
+<p>We are going to explore the relationships between the dependent variable (Real-World CO2 (g/mi)) and some potential independent variables for the regression model.</p>
+<p>Looking at the coefficient of correlation Real-World CO2 (g/mi) - Car weight (lbs) and Real-World CO2 (g/mi) - Car Horsepower (hp), there is a moderately positive linear relationship (0.3672332) and a weak negative linear relationship between the Real-World CO2 (g/mi), Car weight and Horsepower <strong>respectively</strong></p>
+<div class="page-columns page-full">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(automobile_data<span class="sc">$</span>weight__lbs_, automobile_data<span class="sc">$</span>real_world_co2__g_mi_)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(automobile_data<span class="sc">$</span>horsepower__hp_, automobile_data<span class="sc">$</span>real_world_co2__g_mi_)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> automobile_data, <span class="fu">aes</span>(<span class="at">x=</span>weight__lbs_, <span class="at">y=</span>real_world_co2__g_mi_ )) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> vehicle_type), <span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatter Plot"</span>, <span class="at">x =</span> <span class="st">"Weight (lbs)"</span>, <span class="at">y =</span> <span class="st">"Real-World CO2 (g/mi)"</span>) <span class="sc">+</span> <span class="fu">scale_color_viridis_d</span>() </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> automobile_data, <span class="fu">aes</span>(<span class="at">x=</span>horsepower__hp_, <span class="at">y=</span>real_world_co2__g_mi_)) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> vehicle_type),<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatter Plot"</span>, <span class="at">x =</span> <span class="st">"Horsepower (Hp)"</span>, <span class="at">y =</span> <span class="st">"Real-World CO2 (g/mi)"</span>) <span class="sc">+</span> <span class="fu">scale_color_viridis_d</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-comp" class="cell column-page-inset-right quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<pre><code>[1] 0.3672332</code></pre>
+</div>
+<div class="cell-output cell-output-stdout quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<pre><code>[1] -0.2634112</code></pre>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-comp-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="CH7LPU_files/figure-html/fig-comp-1.png" class="img-fluid figure-img" data-ref-parent="fig-comp" width="672"></p>
+<figcaption class="figure-caption">(a) Car weight colored by Vehicle type</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-comp-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="CH7LPU_files/figure-html/fig-comp-2.png" class="img-fluid figure-img" data-ref-parent="fig-comp" width="672"></p>
+<figcaption class="figure-caption">(b) Car Horsepower colored by Vehicle type</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;1: Car weight (lb) and horsepower (hp) plotted individually with Real-world CO2 (g/mi).</figcaption><p></p>
+</figure>
+</div>
+</div>
+<p>Looking at the coefficient of correlation Real-World CO2 (g/mi) - Real-world MPG (mile per gallon), there is a strong negative linear relationship (-0.9533945)</p>
+<div id="fig-scatterplot" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(automobile_data<span class="sc">$</span>real_world_mpg, automobile_data<span class="sc">$</span>real_world_co2__g_mi_)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.9533945</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> automobile_data, <span class="fu">aes</span>(<span class="at">x=</span>real_world_mpg, <span class="at">y=</span>real_world_co2__g_mi_)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> vehicle_type),<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Scatter Plot"</span>, <span class="at">x =</span> <span class="st">"Real World MPG"</span>, <span class="at">y =</span> <span class="st">"Real-World CO2 (g/mi)"</span>) <span class="sc">+</span> <span class="fu">scale_color_viridis_d</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-scatterplot" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="CH7LPU_files/figure-html/fig-scatterplot-1.png" class="img-fluid figure-img" alt="Scatterplot of city vs. highway mileage for cars, where points are colored by the number of cylinders. The plot displays a positive, linear, and strong relationship between city and highway mileage, and mileage increases as the number of cylinders decreases." data-ref-parent="fig-scatterplot" width="576"></p>
+<figcaption class="figure-caption">(a) Real World MPG colored by Vehicle type</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="figure-caption">Figure&nbsp;2: Real World CO2 emission and Real-World MPG scatter plot</figcaption>
+</figure>
+</div>
+<p>We will not be considering the Real world MPG in City and in Highway (hwy) for the model, although these lists are provided in the dataset, they are but a derivative of the Real-world MPG list and are extremely correlated to one another. Making use of them will cause a <strong>collinearity</strong> issue and we do not want that.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="fu">cor</span>(automobile_data<span class="sc">$</span>real_world_mpg, automobile_data<span class="sc">$</span>real_world_mpg_city), <span class="fu">cor</span>(automobile_data<span class="sc">$</span>real_world_mpg, automobile_data<span class="sc">$</span>real_world_mpg_hwy))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9885022 0.9947138</code></pre>
+</div>
+</div>
+<p><strong>Conclusions</strong>: <em>Although the coefficient of correlation tests gives a lot of interesting insights about the strength and direction of the linear relationship between the variables and the real-world CO2 emission, it does not indicate statistical significance. In a regression context, we would want to assess the statistical significance of the coefficient associated with these independent variables.</em></p>
+</section>
+<section id="model-selection-training-and-validation" class="level2">
+<h2 class="anchored" data-anchor-id="model-selection-training-and-validation">Model Selection, Training and Validation</h2>
+<p>For this phase, we will progressively build, observe and modify our initial model until we have the model with the best goodness of fit.</p>
+<section id="model-a---predicting-real-world-co2-gmi-using-real-world-mpg" class="level4">
+<h4 class="anchored" data-anchor-id="model-a---predicting-real-world-co2-gmi-using-real-world-mpg">1. Model A - predicting <strong>Real-World CO2 (g/mi)</strong> using <strong>Real-World MPG</strong></h4>
+<div class="cell" data-answer="false">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>modelA <span class="ot">&lt;-</span> <span class="fu">lm</span>(real_world_co2__g_mi_ <span class="sc">~</span> real_world_mpg, <span class="at">data =</span> automobile_data)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = real_world_co2__g_mi_ ~ real_world_mpg, data = automobile_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-22.640 -19.180 -11.923  -1.304 155.687 
+
+Coefficients:
+               Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    934.9903     7.7630  120.44   &lt;2e-16 ***
+real_world_mpg -23.4224     0.3793  -61.76   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 32.47 on 382 degrees of freedom
+Multiple R-squared:  0.909, Adjusted R-squared:  0.9087 
+F-statistic:  3814 on 1 and 382 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><strong>Comment on Model A</strong>: <em>Our coefficient of determination is &gt;90%, this means we can explain 90% of the CO2 emissions with the values of the miles per gallon (MPG). We still have a 32.37% residual error.</em></p>
+</section>
+<section id="model-b---predicting-real-world-co2-gmi-using-real-world-mpg-car-weight-and-horsepower" class="level4">
+<h4 class="anchored" data-anchor-id="model-b---predicting-real-world-co2-gmi-using-real-world-mpg-car-weight-and-horsepower">2. Model B - predicting <strong>Real-World CO2 (g/mi)</strong> using <strong>Real-World MPG, Car Weight and Horsepower</strong></h4>
+<div class="cell" data-answer="false">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>modelB <span class="ot">&lt;-</span> <span class="fu">lm</span>(real_world_co2__g_mi_ <span class="sc">~</span> real_world_mpg <span class="sc">+</span> weight__lbs_ <span class="sc">+</span> horsepower__hp_ , <span class="at">data =</span> automobile_data)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = real_world_co2__g_mi_ ~ real_world_mpg + weight__lbs_ + 
+    horsepower__hp_, data = automobile_data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-32.253 -18.151  -8.671   0.432 157.221 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     812.532951  40.146032  20.239  &lt; 2e-16 ***
+real_world_mpg  -20.611366   0.862766 -23.890  &lt; 2e-16 ***
+weight__lbs_      0.033474   0.009998   3.348 0.000895 ***
+horsepower__hp_  -0.367097   0.092791  -3.956 9.09e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 31.85 on 380 degrees of freedom
+Multiple R-squared:  0.9129,    Adjusted R-squared:  0.9122 
+F-statistic:  1327 on 3 and 380 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><strong>Comment on Model B</strong>: <em>Our coefficient of determination is better than that of Model A; 0.9122, this means we can explain 91.22 of the CO2 emissions with the values of the miles per gallon (MPG), car weight and horsepower. We also have a lower standard estimation error of 31.85%. It is also important to note that all independent variables have a significant contribution to the model.</em></p>
+</section>
+<section id="model-c---predicting-the-natural-logarithm-of-real-world-co2-gmi-using-real-world-mpg-car-weight-and-horsepower." class="level4">
+<h4 class="anchored" data-anchor-id="model-c---predicting-the-natural-logarithm-of-real-world-co2-gmi-using-real-world-mpg-car-weight-and-horsepower.">3. Model C - predicting the natural logarithm of <strong>Real-World CO2 (g/mi)</strong> using <strong>Real-World MPG, Car Weight and Horsepower.</strong></h4>
+<p>In this model, we will be performing a multiplicative transformation mainly for relative percentage interpretation of the slopes of our independent variables.</p>
+<div class="cell" data-answer="false">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>modelB <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(real_world_co2__g_mi_) <span class="sc">~</span> real_world_mpg <span class="sc">+</span> weight__lbs_ <span class="sc">+</span> horsepower__hp_ , <span class="at">data =</span> automobile_data)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(modelB)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = log(real_world_co2__g_mi_) ~ real_world_mpg + weight__lbs_ + 
+    horsepower__hp_, data = automobile_data)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.03496 -0.01727 -0.01006  0.00186  0.14300 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)      6.986e+00  3.947e-02 176.997  &lt; 2e-16 ***
+real_world_mpg  -4.722e-02  8.483e-04 -55.669  &lt; 2e-16 ***
+weight__lbs_     3.900e-05  9.830e-06   3.968 8.68e-05 ***
+horsepower__hp_ -4.219e-04  9.123e-05  -4.624 5.17e-06 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.03131 on 380 degrees of freedom
+Multiple R-squared:  0.9805,    Adjusted R-squared:  0.9803 
+F-statistic:  6359 on 3 and 380 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p><strong>Comment on Model C</strong>: <em>Our coefficient of determination is better than that of Model A and B; 0.9803, this means we can explain 98% of the natural logarithm of the CO2 emissions with values of the miles per gallon (MPG), car weight and horsepower. Our standard estimation error is 3.13%.</em></p>
+<p>This model interprets the effect of the independent variables as a relative percentage. Therefore, we can say that a coefficient of -0.04722 for “real_world_mpg” suggests a 4.722% decrease in CO2 emissions for a one-unit increase in MPG.</p>
+<p>The Regression equation is given as:</p>
+<p><span class="math display">\[
+\log(\text{Real-World CO2 (g/mi)}) = 6.986 - 0.04722 \times \text{Real-World MPG} + 0.000039 \times \text{Weight (lbs)} - 0.0004219 \times \text{Horsepower (HP)}\
+\]</span></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
